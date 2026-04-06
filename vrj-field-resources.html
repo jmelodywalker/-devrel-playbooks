@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Resources — Velvet Razor Jade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --razor: #c8392b;
+    --velvet: #2c1a4a;
+    --gold: #b89a4e;
+    --muted: #7a7068;
+    --rule: #ccc5b5;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 64px 48px 48px;
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .header::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: linear-gradient(90deg, var(--razor) 0%, var(--velvet) 60%, transparent 100%);
+    margin-top: 32px;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--razor);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--ink);
+    max-width: 720px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--velvet);
+  }
+
+  .header-sub {
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.65;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 48px 96px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; padding: 32px 24px 72px; }
+    .header { padding: 48px 24px 32px; }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #fff;
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: default;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.10);
+  }
+
+  .card-accent {
+    height: 4px;
+    width: 100%;
+  }
+
+  .card--playbook .card-accent { background: linear-gradient(90deg, var(--velvet), #5a3a8a); }
+  .card--cookbook .card-accent  { background: linear-gradient(90deg, var(--razor), #e06030); }
+
+  .card-inner { padding: 32px 32px 28px; }
+
+  .card-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card--playbook .card-type { color: var(--velvet); }
+  .card--cookbook .card-type { color: var(--razor); }
+
+  .card-type-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .card--playbook .card-type-dot { background: var(--velvet); }
+  .card--cookbook .card-type-dot { background: var(--razor); }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-weight: 300;
+    margin-bottom: 28px;
+  }
+
+  /* ── METADATA ROW ── */
+  .meta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .meta-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    background: var(--cream);
+    color: var(--muted);
+    border-radius: 2px;
+  }
+
+  /* ── SECTIONS ── */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .section-block { margin-bottom: 24px; }
+
+  /* PLAYBOOK: timeline steps */
+  .phase-list { list-style: none; }
+
+  .phase-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: start;
+  }
+
+  .phase-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: #fff;
+    background: var(--velvet);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .phase-text strong {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .phase-text span {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* COOKBOOK: recipe steps */
+  .recipe-list { list-style: none; }
+
+  .recipe-item {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: start;
+  }
+
+  .recipe-check {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--razor);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+  }
+
+  .recipe-text {
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.55;
+    font-weight: 300;
+  }
+
+  .recipe-text code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--cream);
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--razor);
+  }
+
+  /* METRICS / SIGNALS */
+  .metric-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .metric-box {
+    background: var(--cream);
+    padding: 12px 14px;
+    border-radius: 2px;
+  }
+
+  .metric-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--velvet);
+    line-height: 1;
+  }
+
+  .card--cookbook .metric-val { color: var(--razor); }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.4;
+    font-weight: 300;
+  }
+
+  /* FOOTER TAG */
+  .card-footer {
+    padding: 16px 32px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--cream);
+  }
+
+  .card-footer-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .card-footer-arrow {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* ── BOTTOM RULE ── */
+  .bottom-note {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 48px 64px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .bottom-note span::before { content: '— '; }
+
+  /* ── DECORATIVE ── */
+  .deco-line {
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px; height: 100%;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent 8px,
+      var(--rule) 8px,
+      var(--rule) 9px
+    );
+    opacity: 0.25;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <p class="eyebrow">Field Resources · VRJ DevRel Portfolio</p>
+  <h1>When <em>production</em> is the<br>actual product.</h1>
+  <p class="header-sub">
+    Practitioner-grade playbooks and cookbooks for teams closing the gap between AI demos and deployed systems. Built from field observation, not vendor decks.
+  </p>
+</header>
+
+<section class="grid">
+
+  <!-- ══ PLAYBOOK CARD ══ -->
+  <article class="card card--playbook">
+    <div class="card-accent"></div>
+    <div class="deco-line"></div>
+    <div class="card-inner">
+
+      <p class="card-type">
+        <span class="card-type-dot"></span>
+        Playbook · Strategic Motion
+      </p>
+
+      <h2>The Demo-to-Production<br>Field Playbook</h2>
+
+      <p class="card-desc">
+        A six-phase motion for DevRel teams shipping AI features from controlled demo into enterprise-grade production. Designed for teams where the gap is the problem, not the model.
+      </p>
+
+      <div class="meta-row">
+        <span class="meta-pill">Audience: DevRel / PM / Eng</span>
+        <span class="meta-pill">Stage: Post-launch</span>
+        <span class="meta-pill">Scope: 6–12 weeks</span>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Phase Sequence</p>
+        <ul class="phase-list">
+          <li class="phase-item">
+            <span class="phase-num">1</span>
+            <span class="phase-text">
+              <strong>Signal Audit</strong>
+              <span>Map where demo assumptions collide with real data distributions. Instrument before you optimize.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">2</span>
+            <span class="phase-text">
+              <strong>Grounding Verification</strong>
+              <span>Validate retrieval fidelity against production corpora. Demo RAG ≠ production RAG.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">3</span>
+            <span class="phase-text">
+              <strong>Cost Baseline</strong>
+              <span>Token cost at demo volume vs. projected production volume. Surface the math early.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">4</span>
+            <span class="phase-text">
+              <strong>Failure Mode Taxonomy</strong>
+              <span>Classify prompt instability, hallucination vectors, and edge-case exposure before GA.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">5</span>
+            <span class="phase-text">
+              <strong>Developer Enablement Layer</strong>
+              <span>Cookbooks, SDKs, and reference architectures that meet developers at their real environment.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">6</span>
+            <span class="phase-text">
+              <strong>Trust Signal Distribution</strong>
+              <span>Publish findings, benchmarks, and practitioner narratives. Trust is earned in the open.</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Success Signals</p>
+        <div class="metric-row">
+          <div class="metric-box">
+            <div class="metric-val">↓ 40%</div>
+            <div class="metric-label">support tickets from "it worked in demo"</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">3×</div>
+            <div class="metric-label">faster production onboarding vs. undocumented launch</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <span class="card-footer-tag">vrj-demo-prod-playbook-v1</span>
+      <span class="card-footer-arrow">↗</span>
+    </div>
+  </article>
+
+  <!-- ══ COOKBOOK CARD ══ -->
+  <article class="card card--cookbook">
+    <div class="card-accent"></div>
+    <div class="deco-line"></div>
+    <div class="card-inner">
+
+      <p class="card-type">
+        <span class="card-type-dot"></span>
+        Cookbook · Executable Recipe
+      </p>
+
+      <h2>Audit Your AI Demo Before<br>You Ship It</h2>
+
+      <p class="card-desc">
+        A step-by-step recipe for engineers who inherited a demo that "works great" and need to prove — or disprove — that claim before production go-live.
+      </p>
+
+      <div class="meta-row">
+        <span class="meta-pill">Audience: Engineers / ML Ops</span>
+        <span class="meta-pill">Time: ~90 min</span>
+        <span class="meta-pill">Tools: CLI + local</span>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Recipe Steps</p>
+        <ul class="recipe-list">
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 1 — Baseline the prompt.</strong> Run your demo prompt 20× against production data. Log variance in output structure, not just content.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 2 — Estimate real token cost.</strong> Use <code>token-estimator</code> with your actual production payload. Compare to your demo estimate. Delta &gt;2× = red flag.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 3 — Grounding check.</strong> Pull 5 retrieved chunks from your prod corpus. Do they match what your demo assumed? Confirm with <code>contexteval --verify</code>.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 4 — Inject edge cases.</strong> Feed 3 adversarial inputs your demo was never shown. Run <code>trace-bench --profile instability</code>. Document what breaks.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 5 — Write your honest ship/no-ship memo.</strong> One paragraph. Surface it to your team before GA, not after the first production incident.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">What you walk away with</p>
+        <div class="metric-row">
+          <div class="metric-box">
+            <div class="metric-val">1</div>
+            <div class="metric-label">honest audit doc your team can actually act on</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">0</div>
+            <div class="metric-label">surprises post-launch that were actually visible pre-launch</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <span class="card-footer-tag">vrj-demo-audit-cookbook-v1</span>
+      <span class="card-footer-arrow">↗</span>
+    </div>
+  </article>
+
+</section>
+
+<!-- ══ ROW 2 DIVIDER ══ -->
+<div style="max-width:960px;margin:0 auto;padding:0 48px 40px;display:flex;align-items:center;gap:20px;">
+  <div style="flex:1;height:1px;background:var(--rule);"></div>
+  <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Evaluation Infrastructure</span>
+  <div style="flex:1;height:1px;background:var(--rule);"></div>
+</div>
+
+<section class="grid" style="padding-top:0;">
+
+  <!-- ══ PLAYBOOK 2 ══ -->
+  <article class="card card--playbook">
+    <div class="card-accent"></div>
+    <div class="deco-line"></div>
+    <div class="card-inner">
+
+      <p class="card-type">
+        <span class="card-type-dot"></span>
+        Playbook · Strategic Motion
+      </p>
+
+      <h2>The Evaluation Practice<br>Playbook</h2>
+
+      <p class="card-desc">
+        A motion for teams that have run evals once and called it done. Building a repeatable evaluation practice is an infrastructure problem — not a model problem.
+      </p>
+
+      <div class="meta-row">
+        <span class="meta-pill">Audience: ML Ops / DevRel / Eng</span>
+        <span class="meta-pill">Stage: Pre-scale</span>
+        <span class="meta-pill">Scope: Ongoing</span>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Phase Sequence</p>
+        <ul class="phase-list">
+          <li class="phase-item">
+            <span class="phase-num">1</span>
+            <span class="phase-text">
+              <strong>Define What You're Actually Measuring</strong>
+              <span>Accuracy of what? Against which ground truth? Most teams skip this and wonder why evals disagree with production behavior.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">2</span>
+            <span class="phase-text">
+              <strong>Build a Stable Test Corpus</strong>
+              <span>Curated, versioned, adversarially representative. If your eval set drifts, your benchmark is lying to you.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">3</span>
+            <span class="phase-text">
+              <strong>Instrument for Reproducibility</strong>
+              <span>Same prompt, same model version, same temperature — every run. Variance you can't explain is debt you'll pay later.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">4</span>
+            <span class="phase-text">
+              <strong>Establish a Regression Gate</strong>
+              <span>Before any model update ships, evals run. Not after. Not "when we have time." Gate the pipeline.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">5</span>
+            <span class="phase-text">
+              <strong>Publish Internal Benchmarks</strong>
+              <span>Share eval results with the team in a format they can act on. A number without context is just noise.</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Success Signals</p>
+        <div class="metric-row">
+          <div class="metric-box">
+            <div class="metric-val">1×</div>
+            <div class="metric-label">eval run per model change, no exceptions</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">↓</div>
+            <div class="metric-label">production regressions caught post-deploy</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <span class="card-footer-tag">vrj-eval-practice-playbook-v1</span>
+      <span class="card-footer-arrow">↗</span>
+    </div>
+  </article>
+
+  <!-- ══ COOKBOOK 2 ══ -->
+  <article class="card card--cookbook">
+    <div class="card-accent"></div>
+    <div class="deco-line"></div>
+    <div class="card-inner">
+
+      <p class="card-type">
+        <span class="card-type-dot"></span>
+        Cookbook · Executable Recipe
+      </p>
+
+      <h2>Run Your First Repeatable<br>LLM Benchmark</h2>
+
+      <p class="card-desc">
+        A recipe for engineers who've been told "we need evals" and handed no infrastructure to run them. First benchmark in under two hours, repeatable forever.
+      </p>
+
+      <div class="meta-row">
+        <span class="meta-pill">Audience: Engineers / ML Ops</span>
+        <span class="meta-pill">Time: ~2 hrs</span>
+        <span class="meta-pill">Tools: BenchKit + CLI</span>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Recipe Steps</p>
+        <ul class="recipe-list">
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 1 — Pick one behavior to measure.</strong> Not "quality." One behavior: hallucination rate, format compliance, refusal rate. Narrow wins.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 2 — Build a 20-prompt test set.</strong> 15 representative, 5 adversarial. Save to <code>eval-corpus-v1.json</code>. Version it from day one.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 3 — Run baseline with BenchKit.</strong> <code>benchkit run --corpus eval-corpus-v1.json --model [your-model]</code>. Log the output. This is your zero-point.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 4 — Change one variable.</strong> Model version, temperature, or prompt wording. Run again. Compare delta. Now you have signal, not opinion.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 5 — Write the one-sentence finding.</strong> "At temp 0.7, hallucination rate increased 18% vs. temp 0.3." Ship that to your team. That's your eval culture starting.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">What you walk away with</p>
+        <div class="metric-row">
+          <div class="metric-box">
+            <div class="metric-val">1</div>
+            <div class="metric-label">versioned corpus you can run forever</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">∞</div>
+            <div class="metric-label">repeatable — same corpus, any model, any time</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <span class="card-footer-tag">vrj-benchkit-cookbook-v1</span>
+      <span class="card-footer-arrow">↗</span>
+    </div>
+  </article>
+
+</section>
+
+<!-- ══ ROW 3 DIVIDER ══ -->
+<div style="max-width:960px;margin:0 auto;padding:0 48px 40px;display:flex;align-items:center;gap:20px;">
+  <div style="flex:1;height:1px;background:var(--rule);"></div>
+  <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);white-space:nowrap;">Model Version Regression</span>
+  <div style="flex:1;height:1px;background:var(--rule);"></div>
+</div>
+
+<section class="grid" style="padding-top:0;">
+
+  <!-- ══ PLAYBOOK 3 ══ -->
+  <article class="card card--playbook">
+    <div class="card-accent"></div>
+    <div class="deco-line"></div>
+    <div class="card-inner">
+
+      <p class="card-type">
+        <span class="card-type-dot"></span>
+        Playbook · Strategic Motion
+      </p>
+
+      <h2>The Silent Drift<br>Playbook</h2>
+
+      <p class="card-desc">
+        Your model updated. You didn't get a changelog. Your outputs degraded quietly for days before anyone noticed. This is the motion that catches it before your users do.
+      </p>
+
+      <div class="meta-row">
+        <span class="meta-pill">Audience: ML Ops / Eng / DevRel</span>
+        <span class="meta-pill">Stage: Always-on</span>
+        <span class="meta-pill">Scope: Continuous</span>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Phase Sequence</p>
+        <ul class="phase-list">
+          <li class="phase-item">
+            <span class="phase-num">1</span>
+            <span class="phase-text">
+              <strong>Version Lock Your Baselines</strong>
+              <span>Every model you call in production gets a pinned baseline run. Behavior at version X is your ground truth. Not "what it should do" — what it actually did.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">2</span>
+            <span class="phase-text">
+              <strong>Instrument for Drift Detection</strong>
+              <span>Output structure, tone signature, refusal rate, format compliance. The metrics that catch silent changes before accuracy does.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">3</span>
+            <span class="phase-text">
+              <strong>Schedule Automated Regression Runs</strong>
+              <span>Weekly minimum. Daily if you're in a high-stakes vertical. Same prompts, same corpus, compared against pinned baseline. Variance above threshold = alert.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">4</span>
+            <span class="phase-text">
+              <strong>Build a Provider Change Log</strong>
+              <span>Track every model version update, announced or not. Cross-reference against your drift alerts. Build institutional memory your team actually owns.</span>
+            </span>
+          </li>
+          <li class="phase-item">
+            <span class="phase-num">5</span>
+            <span class="phase-text">
+              <strong>Define Your Regression Response Protocol</strong>
+              <span>What is the threshold for rollback? Who decides? What's the escalation path? If you don't have answers before drift happens, you'll make them up under pressure.</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Success Signals</p>
+        <div class="metric-row">
+          <div class="metric-box">
+            <div class="metric-val">0</div>
+            <div class="metric-label">regressions discovered by users before your team</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">↓</div>
+            <div class="metric-label">mean time to detect silent model drift</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <span class="card-footer-tag">vrj-silent-drift-playbook-v1</span>
+      <span class="card-footer-arrow">↗</span>
+    </div>
+  </article>
+
+  <!-- ══ COOKBOOK 3 ══ -->
+  <article class="card card--cookbook">
+    <div class="card-accent"></div>
+    <div class="deco-line"></div>
+    <div class="card-inner">
+
+      <p class="card-type">
+        <span class="card-type-dot"></span>
+        Cookbook · Executable Recipe
+      </p>
+
+      <h2>Catch the Model Update<br>Nobody Told You About</h2>
+
+      <p class="card-desc">
+        A recipe for engineers who suspect their model changed and need to prove it. No vendor confirmation required. Your corpus is the witness.
+      </p>
+
+      <div class="meta-row">
+        <span class="meta-pill">Audience: Engineers / ML Ops</span>
+        <span class="meta-pill">Time: ~1 hr setup</span>
+        <span class="meta-pill">Tools: Trace-bench + CLI</span>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">Recipe Steps</p>
+        <ul class="recipe-list">
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 1 — Pull your oldest stored outputs.</strong> Find the earliest logged responses from your production model. If you haven't been logging, start today. This is your day-one debt.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 2 — Run the same prompts now.</strong> Exact same inputs against your current model. Save to <code>outputs-current.json</code>. Do not change anything else.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 3 — Run structural diff with Trace-bench.</strong> <code>trace-bench --compare outputs-baseline.json outputs-current.json --profile drift</code>. Look at structure and tone variance, not just semantic similarity.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 4 — Classify what changed.</strong> Format drift? Verbosity shift? Refusal rate change? New hedging language? Each pattern points to a different kind of update.</span>
+          </li>
+          <li class="recipe-item">
+            <span class="recipe-check"></span>
+            <span class="recipe-text"><strong>Step 5 — Write the drift report.</strong> Date range, delta magnitude, behavior classification, and your ship/hold recommendation. One page. Now you have evidence, not suspicion.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section-block">
+        <p class="section-label">What you walk away with</p>
+        <div class="metric-row">
+          <div class="metric-box">
+            <div class="metric-val">1</div>
+            <div class="metric-label">drift report your team can act on immediately</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">∞</div>
+            <div class="metric-label">reusable detection pipeline for every future update</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-footer">
+      <span class="card-footer-tag">vrj-drift-detection-cookbook-v1</span>
+      <span class="card-footer-arrow">↗</span>
+    </div>
+  </article>
+
+</section>
+
+<div class="bottom-note">
+  <span>Built from field observation</span>
+  <span>No Gartner. No McKinsey.</span>
+  <span>jademelody.com</span>
+</div>
+
+</body>
+</html>
